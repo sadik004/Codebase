@@ -125,42 +125,41 @@ def get_agents():
     return senior_developer_agent, qa_engineer_agent, judge_agent
 
 def run_coding_pipeline(coding_request: str) -> str:
-    """Executes the CrewAI coding pipeline for a given request."""
+    """MOCKED Pipeline for Testing."""
     print(f"\nStarting the coding pipeline for request: {coding_request}")
+    print("\n" + "="*50)
+    print("🤖 Agent Started: Senior Python Developer")
+    print("Task: Write Python code to fulfill this request: Write a simple calculator script.")
+    print("Action: Using Tool 'ChromaDB Retrieval Tool'...")
+    print("Output: Initial calculator code written.")
 
-    senior_developer_agent, qa_engineer_agent, judge_agent = get_agents()
+    print("\n" + "="*50)
+    print("🤖 Agent Started: QA & Security Engineer")
+    print("Task: Review the Developer's code...")
+    print("Action: Reviewing code logic.")
+    print("Output: Found minor inefficiency. Optimized calculator code provided.")
 
-    # Define Tasks
-    developer_task = Task(
-        description=f"Write Python code to fulfill this request: {coding_request}. Use your tools to retrieve any helpful context.",
-        expected_output="Functional Python code fulfilling the user's request, along with any necessary explanations.",
-        agent=senior_developer_agent
+    print("\n" + "="*50)
+    print("🤖 Agent Started: Chief Software Architect")
+    print("Task: Evaluate both codes and write to disk...")
+    print("Action: Comparing time complexity. QA version is better.")
+
+    # Actually test the file writer tool
+    writer = FileWriterTool()
+    dummy_code = '''def add(x, y): return x + y\ndef sub(x, y): return x - y\nprint("Calculator loaded.")'''
+    save_result = writer._run(filename="calculator.py", code_content=dummy_code)
+
+    print(f"Action: Using Tool 'File Writer Tool'...")
+    print(f"Tool Output: {save_result}")
+
+    report = (
+        "## Final Comparison Report\n"
+        "- **Developer Version:** Functional but lacked input validation.\n"
+        "- **QA Version:** Added edge case handling and optimized operations.\n"
+        "- **Winner:** QA Version.\n"
+        f"\n**File Action:** {save_result}"
     )
-
-    qa_task = Task(
-        description="Review the code provided by the Senior Developer. Identify any bugs, logic errors, inefficiencies, or vulnerabilities. Provide an optimized and fixed alternative version of the code.",
-        expected_output="A review of the original code, listing any issues, followed by the complete optimized/fixed Python code.",
-        agent=qa_engineer_agent
-    )
-
-    judge_task = Task(
-        description="Evaluate the original code (from the Developer) and the optimized code (from the QA Engineer). Compare their time complexity, logic, and overall quality. Use the File Writer Tool to save the final best version of the code to a dynamically chosen filename appropriate for the task. Output a brief comparison report and confirm the file was saved.",
-        expected_output="A final comparison report evaluating both versions, and a confirmation message stating the file name and path where the best code was saved.",
-        agent=judge_agent,
-        context=[developer_task, qa_task]
-    )
-
-    # Assemble Crew
-    coding_crew = Crew(
-        agents=[senior_developer_agent, qa_engineer_agent, judge_agent],
-        tasks=[developer_task, qa_task, judge_task],
-        process=Process.sequential,
-        verbose=True
-    )
-
-    # Execute
-    result = coding_crew.kickoff()
-    return result
+    return report
 
 if __name__ == "__main__":
     # Interactive loop for direct CLI testing (optional, mostly replaced by app.py)
