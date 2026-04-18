@@ -8,3 +8,4 @@ langchain-community
 nest_asyncio
 duckduckgo-search
 langchain-chroma
+agentops

@@ -10,12 +10,18 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.tools import DuckDuckGoSearchRun
 
+# AgentOps for monitoring
+import agentops
+
 # Support nested async loops just in case
 import nest_asyncio
 nest_asyncio.apply()
 
 # Initialize environment variables
 load_dotenv()
+
+# Initialize AgentOps
+agentops.init(tags=["agentic-rag-crew"])
 
 # Constants
 CHROMA_DB_DIR = "./chroma_db"
@@ -172,6 +178,7 @@ if __name__ == "__main__":
 
             if user_input.lower() in ['exit', 'quit']:
                 print("Exiting Agentic RAG System. Goodbye!")
+                agentops.end_session("Success")
                 break
 
             if not user_input:
@@ -186,9 +193,12 @@ if __name__ == "__main__":
 
         except KeyboardInterrupt:
             print("\nExiting Agentic RAG System. Goodbye!")
+            agentops.end_session("Success")
             break
         except EOFError:
             print("\nExiting Agentic RAG System (EOF).")
+            agentops.end_session("Success")
             break
         except Exception as e:
             print(f"\nAn error occurred during execution: {e}")
+            agentops.end_session("Fail")
