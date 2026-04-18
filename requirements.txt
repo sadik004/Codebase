@@ -1,0 +1,8 @@
+crewai
+langchain-google-genai
+chromadb
+llama-parse
+python-dotenv
+langchain
+langchain-community
+nest_asyncio
